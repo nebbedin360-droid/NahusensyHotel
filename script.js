@@ -1,26 +1,35 @@
+// LocalStorage keys for persistence
 const PRICING_KEY = 'nahusenay_prices';
 const BOOKINGS_KEY = 'nahusenay_bookings';
 const ADMIN_PASSWORD = 'senay@1234';
 
+// Default prices
 const defaultPrices = {
     family: 5000,
     double: 4000,
     twin: 3000
 };
 
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadPrices();
 });
 
-/* MOBILE MENU TOGGLE FIX */
+// 1. Mobile Menu Toggle
 function toggleMobileMenu() {
-    const navLinks = document.getElementById('navLinks');
+    const navLinks = document.querySelector('.nav-links');
     if (navLinks) {
         navLinks.classList.toggle('active');
     }
 }
 
-/* PRICING LOGIC */
+// Attach event to hamburger button if present
+const menuBtn = document.querySelector('.menu-btn');
+if (menuBtn) {
+    menuBtn.addEventListener('click', toggleMobileMenu);
+}
+
+// 2. Load & Display Prices
 function loadPrices() {
     const savedPrices = JSON.parse(localStorage.getItem(PRICING_KEY)) || defaultPrices;
     
@@ -28,32 +37,38 @@ function loadPrices() {
     const dbl = document.getElementById('price-double');
     const twn = document.getElementById('price-twin');
 
-    if(fam) fam.innerText = `ETB ${Number(savedPrices.family).toLocaleString()} / Night`;
-    if(dbl) dbl.innerText = `ETB ${Number(savedPrices.double).toLocaleString()} / Night`;
-    if(twn) twn.innerText = `ETB ${Number(savedPrices.twin).toLocaleString()} / Night`;
+    if (fam) fam.innerText = `ETB ${Number(savedPrices.family).toLocaleString()} / Night`;
+    if (dbl) dbl.innerText = `ETB ${Number(savedPrices.double).toLocaleString()} / Night`;
+    if (twn) twn.innerText = `ETB ${Number(savedPrices.twin).toLocaleString()} / Night`;
 
     const ef = document.getElementById('edit-family');
     const ed = document.getElementById('edit-double');
     const et = document.getElementById('edit-twin');
 
-    if(ef) ef.value = savedPrices.family;
-    if(ed) ed.value = savedPrices.double;
-    if(et) et.value = savedPrices.twin;
+    if (ef) ef.value = savedPrices.family;
+    if (ed) ed.value = savedPrices.double;
+    if (et) et.value = savedPrices.twin;
 }
 
+// 3. Save Prices (Admin)
 function saveNewPrices() {
-    const newPrices = {
-        family: document.getElementById('edit-family').value,
-        double: document.getElementById('edit-double').value,
-        twin: document.getElementById('edit-twin').value
-    };
+    const ef = document.getElementById('edit-family');
+    const ed = document.getElementById('edit-double');
+    const et = document.getElementById('edit-twin');
 
-    localStorage.setItem(PRICING_KEY, JSON.stringify(newPrices));
-    loadPrices();
-    alert('Room prices updated successfully!');
+    if (ef && ed && et) {
+        const newPrices = {
+            family: ef.value,
+            double: ed.value,
+            twin: et.value
+        };
+        localStorage.setItem(PRICING_KEY, JSON.stringify(newPrices));
+        loadPrices();
+        alert('Prices updated successfully!');
+    }
 }
 
-/* BOOKING MODAL LOGIC */
+// 4. Booking Modal Handlers
 function openBookingModal(roomType) {
     const modal = document.getElementById('bookingModal');
     const roomTitle = document.getElementById('modalRoomTitle');
@@ -68,20 +83,24 @@ function openBookingModal(roomType) {
 
 function closeBookingModal() {
     const modal = document.getElementById('bookingModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    if (modal) modal.style.display = 'none';
 }
 
 function handleBookingSubmit(event) {
     event.preventDefault();
 
+    const name = document.getElementById('guestName')?.value;
+    const phone = document.getElementById('guestPhone')?.value;
+    const room = document.getElementById('selectedRoomType')?.value;
+    const checkIn = document.getElementById('checkInDate')?.value;
+    const nights = document.getElementById('nights')?.value;
+
     const booking = {
-        name: document.getElementById('guestName').value,
-        phone: document.getElementById('guestPhone').value,
-        room: document.getElementById('selectedRoomType').value,
-        checkIn: document.getElementById('checkInDate').value,
-        nights: document.getElementById('nights').value,
+        name,
+        phone,
+        room,
+        checkIn,
+        nights,
         dateBooked: new Date().toLocaleDateString()
     };
 
@@ -89,19 +108,19 @@ function handleBookingSubmit(event) {
     currentBookings.push(booking);
     localStorage.setItem(BOOKINGS_KEY, JSON.stringify(currentBookings));
 
-    alert(`Thank you, ${booking.name}! Your reservation request for ${booking.room} has been received.`);
+    alert(`Thank you, ${name}! Your booking request for ${room} has been received.`);
     
-    document.getElementById('bookingForm').reset();
+    document.getElementById('bookingForm')?.reset();
     closeBookingModal();
 }
 
-/* PASSWORD-PROTECTED ADMIN LOGIC */
+// 5. Password Protected Admin
 function promptAdminLogin() {
-    const enteredPassword = prompt("Please enter the Admin Password:");
+    const enteredPassword = prompt("Enter Admin Password:");
     if (enteredPassword === ADMIN_PASSWORD) {
         openAdminModal();
     } else if (enteredPassword !== null) {
-        alert("Incorrect password. Access denied.");
+        alert("Incorrect password.");
     }
 }
 
@@ -120,28 +139,28 @@ function renderBookingsTable() {
     const bookings = JSON.parse(localStorage.getItem(BOOKINGS_KEY)) || [];
     const tbody = document.getElementById('bookingsTableBody');
     if (!tbody) return;
-    
+
     tbody.innerHTML = '';
 
     if (bookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings received yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings yet.</td></tr>';
         return;
     }
 
     bookings.forEach(b => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><strong>${b.name}</strong></td>
-            <td><a href="tel:${b.phone}">${b.phone}</a></td>
-            <td>${b.room}</td>
-            <td>${b.checkIn}</td>
-            <td>${b.nights} night(s)</td>
+            <td><strong>${b.name || '-'}</strong></td>
+            <td><a href="tel:${b.phone}">${b.phone || '-'}</a></td>
+            <td>${b.room || '-'}</td>
+            <td>${b.checkIn || '-'}</td>
+            <td>${b.nights || 1} night(s)</td>
         `;
         tbody.appendChild(row);
     });
 }
 
-/* CLOSE MODALS ON OUTSIDE CLICK */
+// 6. Global Click to Close Modals
 window.onclick = function(event) {
     const bookingModal = document.getElementById('bookingModal');
     const adminModal = document.getElementById('adminModal');
