@@ -10,18 +10,13 @@ const defaultPrices = {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPrices();
-    setupMobileMenu();
 });
 
 /* MOBILE MENU TOGGLE FIX */
-function setupMobileMenu() {
-    const menuBtn = document.getElementById('menuBtn');
+function toggleMobileMenu() {
     const navLinks = document.getElementById('navLinks');
-
-    if (menuBtn && navLinks) {
-        menuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
+    if (navLinks) {
+        navLinks.classList.toggle('active');
     }
 }
 
