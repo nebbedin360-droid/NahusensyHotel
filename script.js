@@ -1,5 +1,6 @@
 const PRICING_KEY = 'nahusenay_prices';
 const BOOKINGS_KEY = 'nahusenay_bookings';
+const ADMIN_PASSWORD = 'senay@1234';
 
 const defaultPrices = {
     family: 5000,
@@ -9,7 +10,20 @@ const defaultPrices = {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPrices();
+    setupMobileMenu();
 });
+
+/* MOBILE MENU TOGGLE FIX */
+function setupMobileMenu() {
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    if (menuBtn && navLinks) {
+        menuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
+}
 
 /* PRICING LOGIC */
 function loadPrices() {
@@ -86,7 +100,16 @@ function handleBookingSubmit(event) {
     closeBookingModal();
 }
 
-/* ADMIN PANEL LOGIC */
+/* PASSWORD-PROTECTED ADMIN LOGIC */
+function promptAdminLogin() {
+    const enteredPassword = prompt("Please enter the Admin Password:");
+    if (enteredPassword === ADMIN_PASSWORD) {
+        openAdminModal();
+    } else if (enteredPassword !== null) {
+        alert("Incorrect password. Access denied.");
+    }
+}
+
 function openAdminModal() {
     renderBookingsTable();
     const modal = document.getElementById('adminModal');
@@ -123,6 +146,7 @@ function renderBookingsTable() {
     });
 }
 
+/* CLOSE MODALS ON OUTSIDE CLICK */
 window.onclick = function(event) {
     const bookingModal = document.getElementById('bookingModal');
     const adminModal = document.getElementById('adminModal');
