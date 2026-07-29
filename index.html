@@ -32,8 +32,8 @@
 <li><a href="#" onclick="promptAdminLogin(); return false;" class="admin-link"><i class="fas fa-user-shield"></i> Admin</a></li>
 </ul>
 
-<div class="menu-btn" id="menuBtn">
-<i class="fas fa-bars"></i>
+<div class="menu-btn" id="menuBtn" onclick="toggleMobileMenu()">
+<i class="fas fa-bars" style="pointer-events: none;"></i>
 </div>
 </nav>
 </header>
@@ -255,7 +255,7 @@ family suites, double rooms and twin rooms.
 
 <div id="bookingModal" class="modal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeBookingModal()">&times;</span>
+        <span class="close-btn" onclick="closeBookingModal()">×</span>
         <h2>Book Your Stay</h2>
         <p id="modalRoomTitle" style="margin-bottom: 15px; color: #c5a059; font-weight: bold;"></p>
         <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
@@ -283,7 +283,7 @@ family suites, double rooms and twin rooms.
 
 <div id="adminModal" class="modal">
     <div class="modal-content admin-panel">
-        <span class="close-btn" onclick="closeAdminModal()">&times;</span>
+        <span class="close-btn" onclick="closeAdminModal()">×</span>
         <h2>Hotel Management Dashboard</h2>
         <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">Manage pricing and view guest reservations.</p>
 
