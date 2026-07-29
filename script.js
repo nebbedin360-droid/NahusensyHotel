@@ -1,34 +1,35 @@
-// LocalStorage Keys
 const PRICING_KEY = 'nahusenay_prices';
 const BOOKINGS_KEY = 'nahusenay_bookings';
 
-// Default Prices
 const defaultPrices = {
     family: 5000,
     double: 4000,
     twin: 3000
 };
 
-// Initialize App Data on Load
 document.addEventListener('DOMContentLoaded', () => {
     loadPrices();
 });
 
-/* ==========================================
-   PRICING LOGIC
-========================================== */
+/* PRICING LOGIC */
 function loadPrices() {
     const savedPrices = JSON.parse(localStorage.getItem(PRICING_KEY)) || defaultPrices;
     
-    // Update Display
-    document.getElementById('price-family').innerText = `ETB ${Number(savedPrices.family).toLocaleString()} / Night`;
-    document.getElementById('price-double').innerText = `ETB ${Number(savedPrices.double).toLocaleString()} / Night`;
-    document.getElementById('price-twin').innerText = `ETB ${Number(savedPrices.twin).toLocaleString()} / Night`;
+    const fam = document.getElementById('price-family');
+    const dbl = document.getElementById('price-double');
+    const twn = document.getElementById('price-twin');
 
-    // Set input values in admin panel
-    document.getElementById('edit-family').value = savedPrices.family;
-    document.getElementById('edit-double').value = savedPrices.double;
-    document.getElementById('edit-twin').value = savedPrices.twin;
+    if(fam) fam.innerText = `ETB ${Number(savedPrices.family).toLocaleString()} / Night`;
+    if(dbl) dbl.innerText = `ETB ${Number(savedPrices.double).toLocaleString()} / Night`;
+    if(twn) twn.innerText = `ETB ${Number(savedPrices.twin).toLocaleString()} / Night`;
+
+    const ef = document.getElementById('edit-family');
+    const ed = document.getElementById('edit-double');
+    const et = document.getElementById('edit-twin');
+
+    if(ef) ef.value = savedPrices.family;
+    if(ed) ed.value = savedPrices.double;
+    if(et) et.value = savedPrices.twin;
 }
 
 function saveNewPrices() {
@@ -43,17 +44,24 @@ function saveNewPrices() {
     alert('Room prices updated successfully!');
 }
 
-/* ==========================================
-   BOOKING LOGIC
-========================================== */
+/* BOOKING MODAL LOGIC */
 function openBookingModal(roomType) {
-    document.getElementById('selectedRoomType').value = roomType;
-    document.getElementById('modalRoomTitle').innerText = roomType;
-    document.getElementById('bookingModal').style.display = 'flex';
+    const modal = document.getElementById('bookingModal');
+    const roomTitle = document.getElementById('modalRoomTitle');
+    const selectedInput = document.getElementById('selectedRoomType');
+
+    if (modal) {
+        if (roomTitle) roomTitle.innerText = roomType;
+        if (selectedInput) selectedInput.value = roomType;
+        modal.style.display = 'flex';
+    }
 }
 
 function closeBookingModal() {
-    document.getElementById('bookingModal').style.display = 'none';
+    const modal = document.getElementById('bookingModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function handleBookingSubmit(event) {
@@ -68,33 +76,33 @@ function handleBookingSubmit(event) {
         dateBooked: new Date().toLocaleDateString()
     };
 
-    // Save Booking to LocalStorage
     const currentBookings = JSON.parse(localStorage.getItem(BOOKINGS_KEY)) || [];
     currentBookings.push(booking);
     localStorage.setItem(BOOKINGS_KEY, JSON.stringify(currentBookings));
 
-    alert(`Thank you, ${booking.name}! Your reservation request for ${booking.room} has been received. We will call you shortly.`);
+    alert(`Thank you, ${booking.name}! Your reservation request for ${booking.room} has been received.`);
     
-    // Reset Form
     document.getElementById('bookingForm').reset();
     closeBookingModal();
 }
 
-/* ==========================================
-   ADMIN PANEL LOGIC
-========================================== */
+/* ADMIN PANEL LOGIC */
 function openAdminModal() {
     renderBookingsTable();
-    document.getElementById('adminModal').style.display = 'flex';
+    const modal = document.getElementById('adminModal');
+    if (modal) modal.style.display = 'flex';
 }
 
 function closeAdminModal() {
-    document.getElementById('adminModal').style.display = 'none';
+    const modal = document.getElementById('adminModal');
+    if (modal) modal.style.display = 'none';
 }
 
 function renderBookingsTable() {
     const bookings = JSON.parse(localStorage.getItem(BOOKINGS_KEY)) || [];
     const tbody = document.getElementById('bookingsTableBody');
+    if (!tbody) return;
+    
     tbody.innerHTML = '';
 
     if (bookings.length === 0) {
@@ -115,7 +123,6 @@ function renderBookingsTable() {
     });
 }
 
-// Close modals when clicking outside
 window.onclick = function(event) {
     const bookingModal = document.getElementById('bookingModal');
     const adminModal = document.getElementById('adminModal');
